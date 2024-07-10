@@ -77,7 +77,7 @@ STL被组织成13个头文库：
 
 * vector尾部添加或移除元素非常快速。但是在中部或头部插入元素或移除元素比较费时。
 
-  ![image-20240707101831154](C:\Users\lyq\AppData\Roaming\Typora\typora-user-images\image-20240707101831154.png)
+  ![image-20240707101831154](STL.assets/image-20240707101831154.png)
 
 ###### 2） vector采用模板类实现，vector对象的默认构造形式
 
@@ -461,13 +461,13 @@ cout<<vecIntA.at(3)<<endl;
 
 迭代器的成员函数
 
-![image-20240707191906100](C:\Users\lyq\AppData\Roaming\Typora\typora-user-images\image-20240707191906100.png)
+![image-20240707191906100](STL.assets/image-20240707191906100.png)
 
 
 
 begin和end操作
 
-![image-20240707192039163](C:\Users\lyq\AppData\Roaming\Typora\typora-user-images\image-20240707192039163.png)
+![image-20240707192039163](STL.assets/image-20240707192039163.png)
 
 * begin为指向容器第一个元素的指针，指向尾部的方向
 * end为指向最后一个元素的后一个指针，指向尾部的方向
@@ -1006,7 +1006,7 @@ after clear list empty? 1
 
 * 删除节点导致迭代器失效
 
-  ![image-20240709173318007](C:\Users\lyq\AppData\Roaming\Typora\typora-user-images\image-20240709173318007.png)
+  ![image-20240709173318007](STL.assets/image-20240709173318007.png)
 
 ```
 template<typename T>
