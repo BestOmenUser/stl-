@@ -1719,7 +1719,7 @@ void set_student(set<T,Compare> & Group){
 
 
 
-10) set容器的查找
+###### 10) set容器的查找
 
 * set.find(elem);//查找elem元素，返回指向elem元素的迭代器，如果没有找到elem就返回容器的end()
 * set.count(elem); //返回容器中elem元素的数量，对于set来说要么为0，要么为1，对于multiset可以大于1
@@ -1764,5 +1764,316 @@ cout<<*iter<<endl;
 
 
 
+
+
+###### 11) set容器和set.equal_range(elem)
+
+* 返回容器中与elem相等的上下限的两个迭代器，上限是闭区间，下限是开区间，如[beg,end),即要寻找elem,第一个为不破坏顺序的情况下可插入的第一个位置，second为可插入的最后一个位置即[first,second)区间中可以插入
+
+  如 1 3 5 7 9  set.equal_range(5)      [5,7)
+
+  equal_range(4)   [5,5)
+
+  在visual studio中不能使用超出范围的元素。会异常终止。
+
+  上限的迭代器为7，下线的迭代器为5.
+
+  实例
+
+  ```
+  template<typename T>
+  void set_pair(set<T>& src)
+  {
+  	src.insert(1);
+  	src.insert(3);
+  	src.insert(5);
+  	src.insert(7);
+  	src.insert(9);
+  	pair< set<int>::iterator, set<int>::iterator> pairIter = src.equal_range(5);
+  
+  	cout << *pairIter.first << " " << *pairIter.second << endl;
+  }
+  ```
+
+  结果
+
+  ```
+  5 7
+  ```
+
+  
+
+* 函数返回两个迭代器，而这两个迭代器被封装在pair中。
+
+  pair< set<int>::iterator,set<int>::iterator > pairIt = setInt.equal_range(5)
+
+* pair译为对组，可以将两个值视为一个单元。
+
+* pair<T1,T2>存放的两个值的类型，可以不一样，如T1为int,T2为float.T1,T2也可以是自定义类型。
+
+* pair.first是pair里面的第一个值，是T1类型。
+
+* pair.second是pair里面的第二个值，是T2类型。
+
+
+
+
+
 ### 2.7 map和multimap容器
 
+**键值对**
+
+###### 1) map/multimap容器对象的默认构造
+
+* map/multimap采用模板类实现，对象的默认构造形式；
+
+  map<T1,T2> mapTT;
+
+  multimap<T1,R2> multimapTT;
+
+  例如：
+
+  map<int,char> mapA;
+
+  map<string,float> mapB;
+
+  //其中T1,T2还可以使用各种指针类型或自定义类型。
+
+```
+class Student {
+public:
+	Student(int i,string n)
+	{
+		id = i;
+		name = n;
+	}
+
+private:
+	int id;
+	string name;
+};
+
+void map_Student()
+{
+	map<int, string> mapStudent;
+}
+```
+
+
+
+###### 2) map容器的插入
+
+* map.insert(...); //往容器中插入元素，返回pair;
+
+* 在map中插入元素的三种方式；
+
+  * 通过pair的方式插入对象：mapStudent.insert(pair<int,string>(3,"小张))
+
+  * 通过keyvalue的方式插入对象，mapStudent.insert(map<int,string>::value_type(1,"小李"));
+
+  * 通过数组的方式插入值： mapStudent[3]="小刘"；
+
+    ```
+    void map_Student()
+    {
+    	map<int, string> mapStudent;
+    	mapStudent.insert(pair<int,string>(3, "小张"));
+    	mapStudent.insert(map<int, string>::value_type(1, "小李"));
+    	mapStudent[2] = "小刘";
+    
+    	int key = 5;
+    	string name = "小赵";
+    	pair<int,string> pairST(key, name);
+    	mapStudent.insert(pairST);
+    
+    	key = 6;
+    	name = "小田";
+    	map<int, string>::value_type valueTP(key, name);
+    	mapStudent.insert(valueTP);
+    	cout << mapStudent;
+    
+    	Student S(1, "小王");
+    	map<int, Student> mapStu;
+    	mapStu[1] = S;
+    	mapStu.insert(pair<int, Student>(2, Student(2, "小乐")));
+    	mapStu.insert(map<int, Student>::value_type(3, Student(3, "小娃")));
+    
+    	cout << mapStu;
+    
+    }
+    ```
+
+    结果
+
+    ```
+    1 小李
+    2 小刘
+    3 小张
+    5 小赵
+    6 小田
+    
+    1 小王
+    2 小乐
+    3 小娃
+    ```
+
+* 第三种方法非常直观，但存在一个性能方面的问题，插入3时要先查找主键为3的项，如果没有发现则插入键值对，如果存在则修改值。
+
+* 如果键存在则修改，如果不存在则插入
+
+###### 3) map容器的迭代
+
+```
+for(map<int,string>::iterator it=mapA.begin();it!=mapA.end();++it)
+{
+pair<int,string> pr=*it;
+int ikey=pair.first;
+string strValue=pr.second;
+}
+```
+
+实例
+
+```
+std::ostream& operator<<(std::ostream& out, map<int, string>& src)
+{
+	auto iter= src.begin();
+	for (; iter != src.end(); iter++)
+	{
+		pair<int, string> data = *iter;
+		out << data.first << " " << data.second << endl;
+	}
+	out << endl;
+	return out;
+}
+
+std::ostream& operator<<(std::ostream& out, map<int, Student>& src)
+{
+	auto iter = src.begin();
+	for (; iter != src.end(); iter++)
+	{
+		pair<int, Student> data = *iter;
+		out << data.second.get_id() << " " << data.second.get_name() << endl;
+	}
+	out << endl;
+	return out;
+}
+
+```
+
+
+
+如果类中有成员为指针，那么要实现深拷贝，不然容易同一内存释放两次。
+
+
+
+**并且insert插入数据时不会覆盖原来的数据比较安全，而使用[]运算符会覆该原数据。**
+
+实例
+
+```
+void map_insert()
+{
+	map<int, string> mapStudent;
+	mapStudent.insert(pair<int, string>(3, "小张"));
+	mapStudent.insert(map<int, string>::value_type(1, "小李"));
+	mapStudent[2] = "小刘";
+	cout << mapStudent;
+	mapStudent.insert(pair<int, string>(1, "小部"));
+	cout << mapStudent;
+	mapStudent.insert(map<int, string>::value_type(1, "小坡"));
+	cout << mapStudent;
+	mapStudent[1] = "小柳";
+	cout << mapStudent;
+}
+```
+
+结果
+
+```
+1 小李
+2 小刘
+3 小张
+
+1 小李
+2 小刘
+3 小张
+
+1 小柳
+2 小刘
+3 小张
+```
+
+
+
+**如果使用mapStu[2]操作符取值，必须要存在才是正确的操作，否则会自动创建一个实例，并且自动初始化值。**
+
+
+
+```
+void map_auto_create()
+{
+	map<int, string> mapStudent;
+	mapStudent.insert(pair<int, string>(3, "小张"));
+	string name = mapStudent[1];
+	cout <<"auto:"<< name;
+}
+```
+
+结果
+
+```
+auto:
+```
+
+
+
+4） map容器对象获取键对应的值
+
+* 使用[]操作符
+* 使用find函数：成功返回对应的迭代器，失败返回end()迭代器。
+
+```
+map<int,string>::iterator it = mapStu.find(3)
+```
+
+* 使用at()函数，如果键值不存在抛出out_of_range
+
+实例
+
+```
+template<typename T1,typename T2>
+void map_find(map<T1,T2> &src)
+{
+	map<int, string> mapStudent;
+	mapStudent.insert(pair<int, string>(3, "小张"));
+	mapStudent.insert(map<int, string>::value_type(1, "小李"));
+	mapStudent[2] = "小刘";
+
+	string name;
+	name = mapStudent[1];
+	cout << "id 1 name: " << name << endl;
+
+	auto iter = mapStudent.find(2);
+	if (iter != mapStudent.end()) {
+		name = (*iter).second;
+		cout << "id 2 name: " << name << endl;
+	}
+	else cout << "can not find"<<endl;
+
+	name = mapStudent.at(3);
+	cout << "id 3 name: " << name << endl;
+}
+```
+
+结果
+
+```
+id 1 name: 小李
+id 2 name: 小刘
+id 3 name: 小张
+```
+
+
+
+**推荐使用第二种方法**
